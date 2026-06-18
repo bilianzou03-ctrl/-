@@ -1,0 +1,23 @@
+body {
+    font-family: sans-serif;
+    background: #f0f2f5;
+    padding: 50px;
+}
+.profile {
+    background: #fff;
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+.username {
+    margin: 10px 0 5px;
+}
+.signature {
+    color: #666;
+}

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>全部帖子</title>
+  <style>
+    /* 全局基础：浅绿色背景 + 主题统一 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      background-color: #e8f5e9; /* 浅绿色背景，贴合主题 */
+      padding: 20px;
+    }
+
+    h2 {
+      color: #2e7d32; /* 深绿色标题 */
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-top: 2px solid #c8e6c9;
+    }
+
+    /* 未登录提示：卡片化 */
+    .login-tip {
+      text-align: center;
+      color: #ff4444;
+      font-size: 16px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      max-width: 400px;
+    }
+
+    /* 帖子卡片：白色背景 + 绿色左边框 + 悬浮动效 */
+    .post {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #4caf50; /* 主题绿色左边框 */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .post:hover {
+      transform: translateY(-5px); /* 悬浮时“上浮”效果 */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* 悬浮时阴影加深 */
+    }
+
+    /* 帖子时间、标题、内容 */
+    .time {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    /* 互动按钮：分色 + hover 效果 */
+    .interactions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .like-btn, .comment-btn, .share-btn, .delete-btn, .reply-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    /* 点赞按钮：浅绿色 + 主题绿 */
+    .like-btn {
+      background-color: #e8f5e9;
+      color: #4caf50;
+    }
+    .like-btn:hover {
+      background-color: #c8e6c9;
+    }
+
+    /* 评论按钮：浅蓝色 + 评论数显示 */
+    .comment-btn {
+      background-color: #e8f5e9;
+      color: #2196f3;
+    }
+    .comment-btn:hover {
+      background-color: #c8e6c9;
+    }
+   
+
+    /* 转发按钮：浅橙色 + 转发数显示 */
+    .share-btn {
+      background-color: #e8f5e9;
+      color: #ff9800;
+    }
+    .share-btn:hover {
+      background-color: #c8e6c9;
+    }
+
+    /* 删除按钮：浅红色（仅自己帖子显示） */
+    .delete-btn {
+      background-color: #ffebee;
+      color: #f44336;
+    }
+    .delete-btn:hover {
+      background-color: #ffcdd2;
+    }
+
+    /* 回复按钮：浅绿色 + 主题绿 */
+    .reply-btn {
+      background-color: #e8f5e9;
+      color: #4caf50;
+      font-size: 14px;
+      padding: 4px 8px;
+      margin-left: 10px;
+    }
+    .reply-btn:hover {
+      background-color: #c8e6c9;
+    }
+
+    /* 评论区：分隔线 + 输入框美化 */
+    .comment-section {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .comment-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .comment-input input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .add-comment {
+      padding: 8px 12px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .add-comment:hover {
+      background-color: #388e3c;
+    }
+
+    /* 评论项：浅灰背景 + 圆角 + 回复按钮 */
+    .comment {
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .comment-content {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <h2>帖子列表</h2>
+  <div id="loginTip" class="login-tip" style="display: none;">请先登录查看帖子～</div>
+  <div id="postContainer">
+    <!-- 帖子会动态渲染到这里 -->
+  </div>
+
+  <!-- 帖子互动功能逻辑 -->
+  <script>
+    // ========== 工具函数：读取/保存 localStorage 数据 ==========
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem('currentUser')) || null;
+    }
+
+    function getPosts() {
+        return JSON.parse(localStorage.getItem('posts')) || [];
+    }
+
+    function savePosts(posts) {
+        localStorage.setItem('posts', JSON.stringify(posts));
+    }
+
+    function getUsers() {
+        return JSON.parse(localStorage.getItem('users')) || [];
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function saveCurrentUser(user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+    }
+
+    // ========== DOM 加载完成后执行：渲染帖子 + 绑定事件 ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        const postContainer = document.getElementById('postContainer');
+        const loginTip = document.getElementById('loginTip');
+        const isLogin = localStorage.getItem('isLogin') === 'true';
+        const currentUser = getCurrentUser();
+
+        // 未登录则显示提示
+        if (!isLogin || !currentUser) {
+            loginTip.style.display = 'block';
+            postContainer.innerHTML = '';
+            return;
+        }
+
+        // 渲染所有帖子
+        renderPosts();
+        // 为按钮绑定交互事件
+        bindEvents();
+    });
+
+    // ========== 渲染帖子列表到页面 ==========
+    function renderPosts() {
+        const posts = getPosts();
+        const postContainer = document.getElementById('postContainer');
+
+        // 无帖子时显示提示
+        if (posts.length === 0) {
+            postContainer.innerHTML = '<p style="text-align:center;color:#666;">暂无帖子</p>';
+            return;
+        }
+
+        const currentUser = getCurrentUser();
+        posts.forEach(post => {
+            // 确保帖子对象有必要的属性，避免 undefined
+            post.likes = post.likes || 0;
+            post.shares = post.shares || 0;
+            post.comments = post.comments || [];
+            post.likedUsers = post.likedUsers || [];
+            post.author = post.author || '匿名'; // 修复作者显示为 undefined 的问题
+
+            const isAuthor = post.author === currentUser.username; // 判断是否为帖子作者
+            const isLiked = post.likedUsers.includes(currentUser.username); // 判断是否已点赞
+
+            const postElement = document.createElement('div');
+            postElement.className = 'post';
+            postElement.setAttribute('data-id', post.id);
+
+            postElement.innerHTML = `
+                <div class="time">${post.time} · 作者：${post.author}</div>
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <div class="interactions">
+                    <button class="like-btn" data-id="${post.id}">
+                        <span class="like-icon">${isLiked ? '❤️' : '🩶'}</span>
+                        <span class="likes">${post.likes}</span>
+                    </button>
+                    <button class="comment-btn" data-id="${post.id}">评论
+                    <span class="comment-count" data-id="${post.id}">${post.comments.length}</span></button>
+                  
+                    <button class="share-btn" data-id="${post.id}">转发
+                    <span class="shares" data-id="${post.id}">${post.shares}</span></button>
+                    ${isAuthor ? `<button class="delete-btn" data-id="${post.id}">删除</button>` : ''}
+                </div>
+                <div class="comment-section" data-id="${post.id}">
+                    <div class="comment-input">
+                        <input type="text" placeholder="输入评论..." class="comment-text" data-id="${post.id}">
+                        <button class="add-comment" data-id="${post.id}">提交</button>
+                    </div>
+                    <div class="comments" data-id="${post.id}">
+                        ${post.comments.length > 0 
+                            ? post.comments.map(comment => {
+                                // 提取评论者昵称（格式：[昵称]：内容）
+                                const commenter = comment.match(/^\[([^\]]+)\]/)?.[1] || '匿名用户';
+                                return `
+                                    <div class="comment">
+                                        <div class="comment-content">${comment}</div>
+                                        <button class="reply-btn" data-post-id="${post.id}" data-commenter="${commenter}">回复</button>
+                                    </div>
+                                `;
+                            }).join('') 
+                            : '<p style="color:#999;">暂无评论</p>'}
+                    </div>
+                </div>
+            `;
+            postContainer.appendChild(postElement);
+        });
+    }
+
+    // ========== 为互动按钮绑定事件 ==========
+    function bindEvents() {
+        const currentUser = getCurrentUser();
+
+        // 1. 点赞功能
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = parseInt(this.getAttribute('data-id'));
+                let posts = getPosts();
+                const postIndex = posts.findIndex(p => p.id === postId);
+                if (postIndex === -1) return;
+
+                const post = posts[postIndex];
+                const isLiked = post.likedUsers.includes(currentUser.username);
+
+                if (isLiked) {
+                    // 已点赞 → 取消点赞
+                    post.likes -= 1;
+                    post.likedUsers = post.likedUsers.filter(u => u !== currentUser.username);
+                    this.querySelector('.like-icon').textContent = '🩶';
+                } else {
+                    // 未点赞 → 点赞
+                    post.likes += 1;
+                    post.likedUsers.push(currentUser.username);
+                    this.querySelector('.like-icon').textContent = '❤️';
+                }
+
+                savePosts(posts); // 同步到 localStorage
+                this.querySelector('.likes').textContent = post.likes; // 实时更新点赞数
+            });
+        });
+
+        // 2. 评论提交（评论区已默认显示）
+        document.querySelectorAll('.add-comment').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = parseInt(this.getAttribute('data-id'));
+                const commentText = document.querySelector(`.comment-text[data-id="${postId}"]`).value.trim();
+                if (!commentText) return; // 空评论不提交
+
+                let posts = getPosts();
+                const postIndex = posts.findIndex(p => p.id === postId);
+                if (postIndex === -1) return;
+
+                // 添加评论到帖子
+                posts[postIndex].comments = posts[postIndex].comments || [];
+                posts[postIndex].comments.push(`[${currentUser.nickname || currentUser.username}]：${commentText}`);
+                savePosts(posts); // 同步到 localStorage
+
+                // 实时显示新评论 + 更新评论数
+                const commentsDiv = document.querySelector(`.comments[data-id="${postId}"]`);
+                const newComment = document.createElement('div');
+                newComment.className = 'comment';
+                // 提取当前用户昵称
+                const commenter = currentUser.nickname || currentUser.username;
+                newComment.innerHTML = `
+                    <div class="comment-content">[${commenter}]：${commentText}</div>
+                    <button class="reply-btn" data-post-id="${postId}" data-commenter="${commenter}">回复</button>
+                `;
+                commentsDiv.appendChild(newComment);
+                document.querySelector(`.comment-text[data-id="${postId}"]`).value = ''; // 清空输入框
+
+                // 更新评论数
+                const commentCountEl = document.querySelector(`.comment-count[data-id="${postId}"]`);
+                commentCountEl.textContent = posts[postIndex].comments.length;
+            });
+        });
+
+        // 3. 回复功能：点击“回复”自动填充 @评论者
+        document.querySelectorAll('.reply-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                const commenter = this.getAttribute('data-commenter');
+                const commentInput = document.querySelector(`.comment-text[data-id="${postId}"]`);
+                
+                // 自动填充“@评论者 ”前缀
+                commentInput.value = `@${commenter} `;
+                commentInput.focus(); // 聚焦到输入框
+            });
+        });
+
+        // 4. 转发功能（显示并更新转发数）
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = parseInt(this.getAttribute('data-id'));
+                let posts = getPosts();
+                const postIndex = posts.findIndex(p => p.id === postId);
+                if (postIndex === -1) return;
+
+                // 增加转发数
+                posts[postIndex].shares = (posts[postIndex].shares || 0) + 1;
+                savePosts(posts); // 同步到 localStorage
+
+                // 更新界面上的转发数
+                const sharesEl = document.querySelector(`.shares[data-id="${postId}"]`);
+                sharesEl.textContent = posts[postIndex].shares;
+
+                const post = posts[postIndex];
+                alert(`转发帖子成功！\n标题：${post.title}\n作者：${post.author}`);
+            });
+        });
+
+        // 5. 删除功能（仅帖子作者可操作）
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!confirm('确定要删除这条帖子吗？')) return;
+
+                const postId = parseInt(this.getAttribute('data-id'));
+                let posts = getPosts();
+                // 从帖子列表中删除当前帖子
+                posts = posts.filter(p => p.id !== postId);
+                savePosts(posts); // 同步到 localStorage
+
+                // 更新用户的“已发帖子”列表
+                let users = getUsers();
+                const currentUser = getCurrentUser();
+                const userIndex = users.findIndex(u => u.username === currentUser.username);
+                if (userIndex !== -1) {
+                    users[userIndex].posts = users[userIndex].posts.filter(id => id !== postId);
+                    saveUsers(users); // 同步用户数据到 localStorage
+                    saveCurrentUser(users[userIndex]); // 同步当前用户缓存
+                }
+
+                window.location.reload(); // 刷新页面
+            });
+        });
+    }
+  </script>
+</body>
+</html>

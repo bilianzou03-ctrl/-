@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>发布帖子</title>
+  <style>
+    /* 全局基础：浅绿色背景 + 粒子动画 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+    body {
+      background-color: #e8f5e9; /* 浅绿色背景，贴合主题 */
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 粒子背景：半透明绿色圆点，漂浮动画（z-index 设为 2，确保在图片上层） */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2; /* 高于装饰图片的 z-index:1，保证粒子在图片上方 */
+    }
+    .particle {
+      position: absolute;
+      background-color: rgba(76, 175, 80, 0.2); /* 淡绿色半透明粒子 */
+      border-radius: 50%;
+      animation: float 8s infinite ease-in-out;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-20px) translateX(10px); }
+    }
+
+    /* 两侧装饰图片：z-index 设为 1，在粒子下方 */
+    .decor-img {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 450px; /* 可根据实际图片调整宽度 */
+      height: auto; /* 保持宽高比 */
+      z-index: 1; /* 低于粒子的 z-index:2 */
+    }
+    .decor-img.left {
+      left: 0px;
+    }
+    .decor-img.right {
+      right: 0px;
+    }
+
+    /* 表单容器：居中 + 白色卡片（z-index 设为 3，确保在粒子上层） */
+    .center-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+      z-index: 3; /* 高于粒子的 z-index:2，保证表单在最上层 */
+    }
+    .post-form-card {
+      background-color: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      width: 500px;
+      position: relative;
+    }
+    .post-form-card h2 {
+      color: #000000; /* 深绿色标题 */
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    /* 表单项：输入框 + 文本域 */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-size: 16px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #b2dfdb; /* 浅绿边框 */
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4caf50; /* 聚焦时深绿色边框 */
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    /* 错误提示 */
+    .error-tip {
+      color: #ff4444;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* 发布按钮：绿色渐变 + hover效果 */
+    #publishBtn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #ffd90d, #ffd90d); /* 绿色渐变按钮 */
+      border: none;
+      border-radius: 8px;
+      color: #000000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    #publishBtn:hover {
+      background: linear-gradient(90deg, #ffdd66, #ffdd66); /* hover时加深渐变 */
+      transform: translateY(-2px); /* 轻微上浮 */
+    }
+    #publishBtn:disabled {
+      background: #b2dfdb;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <!-- 两侧装饰图片（需替换为实际图片路径） -->
+  <img src="images/发布帖子装饰图1.png" alt="左侧装饰图" class="decor-img left">
+  <img src="images/发布帖子装饰图2.png" alt="右侧装饰图" class="decor-img right">
+
+  <!-- 粒子背景容器 -->
+  <div class="particles" id="particles"></div>
+
+  <div class="center-container">
+    <div class="post-form-card">
+      <h2>发布帖子</h2>
+      <div class="error-tip" id="loginError">请先登录再发布帖子～</div>
+      <div class="form-group">
+        <label for="title">标题：</label>
+        <input type="text" id="title" placeholder="请输入标题">
+      </div>
+      <div class="form-group">
+        <label for="content">内容：</label>
+        <textarea id="content" rows="5" placeholder="请输入内容"></textarea>
+      </div>
+      <button type="button" onclick="publishPost()" id="publishBtn">发布</button>
+    </div>
+  </div>
+
+  <!-- 粒子背景生成JS -->
+  <script>
+    const particles = document.getElementById('particles');
+    const particleCount = 50;
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.top = `${Math.random() * 100}%`;
+      particle.style.animationDelay = `${Math.random() * 5}s`;
+      const size = 3 + Math.random() * 7;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particles.appendChild(particle);
+    }
+  </script>
+
+  <!-- 原有发布帖子逻辑 -->
+  <script>
+    const loginError = document.getElementById('loginError');
+    const publishBtn = document.getElementById('publishBtn');
+    const getCurrentUser = () => JSON.parse(localStorage.getItem('currentUser')) || null;
+    const getUsers = () => JSON.parse(localStorage.getItem('users')) || [];
+    const getPosts = () => JSON.parse(localStorage.getItem('posts')) || [];
+    const saveUsers = (users) => localStorage.setItem('users', JSON.stringify(users));
+    const saveCurrentUser = (user) => localStorage.setItem('currentUser', JSON.stringify(user));
+    const savePosts = (posts) => localStorage.setItem('posts', JSON.stringify(posts));
+
+    window.onload = function() {
+        const isLogin = localStorage.getItem('isLogin') === 'true';
+        if (!isLogin) {
+            loginError.style.display = 'block';
+            publishBtn.disabled = true;
+        }
+    };
+
+    function publishPost() {
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        const currentUser = getCurrentUser();
+        const users = getUsers();
+        const posts = getPosts();
+
+        if (!title || !content) {
+            alert('标题和内容不能为空');
+            return;
+        }
+
+        if (!currentUser) {
+            alert('请先登录');
+            window.location.href = '登录.html';
+            return;
+        }
+
+        const newPost = {
+            id: Date.now(),
+            title: title,
+            content: content,
+            time: new Date().toLocaleString(),
+            author: currentUser.username,
+            likes: 0,
+            comments: [],
+            likedUsers: []
+        };
+
+        posts.unshift(newPost);
+        savePosts(posts);
+
+        currentUser.posts.push(newPost.id);
+        saveCurrentUser(currentUser);
+
+        const userIndex = users.findIndex(u => u.username === currentUser.username);
+        if (userIndex !== -1) {
+            users[userIndex].posts = currentUser.posts;
+            saveUsers(users);
+        }
+
+        alert('发布成功');
+        window.location.href = '论坛主页.html';
+    }
+  </script>
+</body>
+</html>

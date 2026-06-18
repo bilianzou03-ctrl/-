@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地图页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#016823', // 深绿主色调
+                        secondary: '#f59e0b', // 黄色强调色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- 顶部长图横幅 -->
+    <header class="relative w-full overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40 z-10"></div>
+        <img src="images/地图1.jpg" alt="地图横幅" 
+             class="w-full h-[30vh] min-h-[240px] object-cover">
+        <div class="absolute inset-0 z-10 flex flex-col justify-center items-center text-white text-center px-0">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-4 drop-shadow-lg">
+                大地图探索
+            </h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] max-w-2xl drop-shadow-md">
+                探索妖精世界的每一个角落，发现隐藏的秘密与宝藏
+            </p>
+        </div>
+    </header>
+
+    <!-- 下方五张小地图 -->
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-10">
+            区域地图
+        </h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            <!-- 小地图 1 -->
+            <div class="map-card group">
+                <div class="relative aspect-square overflow-hidden">
+                    <img src="images/地图2.jpg" alt="苍南会馆" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="map-name">
+                        苍南会馆
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 小地图 2 -->
+            <div class="map-card group">
+                <div class="relative aspect-square overflow-hidden">
+                    <img src="images/地图3.jpg" alt="灵溪会馆" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="map-name">
+                        灵溪会馆
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 小地图 3 -->
+            <div class="map-card group">
+                <div class="relative aspect-square overflow-hidden">
+                    <img src="images/地图4.jpg" alt="洞桥会馆" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="map-name">
+                        洞桥会馆
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 小地图 4 -->
+            <div class="map-card group">
+                <div class="relative aspect-square overflow-hidden">
+                    <img src="images/地图5.jpg" alt="流石会馆" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="map-name">
+                        流石会馆
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 小地图 5 -->
+            <div class="map-card group">
+                <div class="relative aspect-square overflow-hidden">
+                    <img src="images/地图6.jpg" alt="寒木会馆" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="map-name">
+                        寒木会馆
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-primary text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2025 妖精论坛 - 探索无限可能</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f0f9f4 0%, #d6f0df 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* 粒子背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background-color: rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-20px) translateX(10px); }
+        }
+
+        /* 容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        /* 未登录提示 */
+        .login-tip {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        .login-tip h2 {
+            color: #000000;
+            margin-bottom: 15px;
+        }
+        .login-tip p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* 个人资料卡片 */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            display: none;
+        }
+        .avatar-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px; /* 头像与两侧图片的间距 */
+            margin-bottom: 25px;
+        }
+        .avatar-side {
+            width: 20px; /* 图片宽度，可调整 */
+            height: 50px; /* 图片高度，可调整 */
+            animation: floatSide 2s infinite ease-in-out; /* 两侧图片的浮动动画 */
+        }
+        @keyframes floatSide {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #016823;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            transition: transform 0.3s ease;
+            z-index: 2; /* 确保头像在最上层，不被遮挡 */
+            position: relative;
+        }
+        .avatar:hover {
+            transform: scale(1.05);
+        }
+        .avatar-upload {
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+            color: #000000;
+        }
+        .avatar-upload input {
+            display: none;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #000000;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #b2dfdb;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-yellow {
+            background: linear-gradient(90deg, #ffd90d, #ffd90d);
+            color: #000000;
+        }
+        .btn-yellow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 222, 128, 0.4);
+        }
+        .btn-gray {
+            background: #e0e0e0;
+            color: #555;
+        }
+        .btn-gray:hover {
+            background: #d0d0d0;
+        }
+        .form-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景容器 -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- 未登录提示 -->
+        <div class="login-tip" id="loginTip">
+            <h2>请先登录或注册</h2>
+            <p>只有登录后才能查看和编辑个人资料</p>
+            <a href="注册.html" class="btn btn-yellow">注册账号</a>
+            <a href="登录.html" class="btn btn-gray">登录账号</a>
+        </div>
+
+        <!-- 个人资料卡片 -->
+        <div class="profile-card" id="profileCard">
+            <form class="profile-form" id="profileForm">
+                <div class="avatar-wrap">
+                    <!-- 左侧动图 -->
+                    <img src="images/绿色植物2.png" alt="左侧动图" class="avatar-side" />
+                    <!-- 头像 -->
+                    <img src="" alt="个人头像" class="avatar" id="avatarImg">
+                    <label class="avatar-upload">
+                        <input type="file" accept="image/*" id="avatarUpload">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#333">
+                            <path d="M12 5v14M5 12h14M19 19H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2z" />
+                        </svg>
+                    </label>
+                    <!-- 右侧动图 -->
+                    <img src="images/绿色植物2.png" alt="右侧动图" class="avatar-side" />
+                </div>
+
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" readonly required>
+                </div>
+                <div class="form-group">
+                    <label for="nickname">昵称</label>
+                    <input type="text" id="nickname" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">性别</label>
+                    <select id="gender">
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                        <option value="保密">保密</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="birthday">生日</label>
+                    <input type="date" id="birthday">
+                </div>
+                <div class="form-group">
+                    <label for="intro">个人简介</label>
+                    <textarea id="intro"></textarea>
+                </div>
+
+                <div class="form-btns">
+                    <button type="submit" class="btn btn-yellow">保存资料</button>
+                    <button type="reset" class="btn btn-gray">重置</button>
+                </div>
+            </form>
+
+            <div class="logout-btn">
+                <button class="btn btn-gray" id="logoutBtn">退出登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 粒子背景生成JS -->
+    <script>
+        // 创建粒子背景
+        const particles = document.getElementById('particles');
+        const particleCount = 50;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            const size = 3 + Math.random() * 7;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particles.appendChild(particle);
+        }
+    </script>
+
+    <!-- 原有功能逻辑 -->
+    <script>
+        const loginTip = document.getElementById('loginTip');
+        const profileCard = document.getElementById('profileCard');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const avatarUpload = document.getElementById('avatarUpload');
+        const avatarImg = document.getElementById('avatarImg');
+        const profileForm = document.getElementById('profileForm');
+        const usernameInput = document.getElementById('username');
+        const nicknameInput = document.getElementById('nickname');
+        const genderSelect = document.getElementById('gender');
+        const birthdayInput = document.getElementById('birthday');
+        const introTextarea = document.getElementById('intro');
+
+        const getCurrentUser = () => JSON.parse(localStorage.getItem('currentUser')) || null;
+        const getUsers = () => JSON.parse(localStorage.getItem('users')) || [];
+        const saveUsers = (users) => localStorage.setItem('users', JSON.stringify(users));
+        const saveCurrentUser = (user) => localStorage.setItem('currentUser', JSON.stringify(user));
+
+        // 页面加载填充资料
+        window.onload = function() {
+            const currentUser = getCurrentUser();
+            const isLogin = localStorage.getItem('isLogin') === 'true';
+
+            if (isLogin && currentUser) {
+                loginTip.style.display = 'none';
+                profileCard.style.display = 'block';
+
+                avatarImg.src = currentUser.avatar;
+                usernameInput.value = currentUser.username;
+                nicknameInput.value = currentUser.nickname;
+                genderSelect.value = currentUser.gender;
+                birthdayInput.value = currentUser.birthday;
+                introTextarea.value = currentUser.intro;
+            } else {
+                loginTip.style.display = 'block';
+                profileCard.style.display = 'none';
+            }
+        };
+
+        // 退出登录
+        logoutBtn.addEventListener('click', function() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('isLogin');
+                localStorage.removeItem('currentUser');
+                window.location.reload();
+            }
+        });
+
+        // 头像上传
+        avatarUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatarBase64 = event.target.result;
+                    avatarImg.src = avatarBase64;
+
+                    const currentUser = getCurrentUser();
+                    currentUser.avatar = avatarBase64;
+                    saveCurrentUser(currentUser);
+
+                    const users = getUsers();
+                    const userIndex = users.findIndex(u => u.username === currentUser.username);
+                    if (userIndex !== -1) {
+                        users[userIndex].avatar = avatarBase64;
+                        saveUsers(users);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 保存资料
+        profileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const currentUser = getCurrentUser();
+            const users = getUsers();
+
+            currentUser.nickname = nicknameInput.value;
+            currentUser.gender = genderSelect.value;
+            currentUser.birthday = birthdayInput.value;
+            currentUser.intro = introTextarea.value;
+
+            saveCurrentUser(currentUser);
+
+            const userIndex = users.findIndex(u => u.username === currentUser.username);
+            if (userIndex !== -1) {
+                users[userIndex] = { ...users[userIndex], ...currentUser };
+                saveUsers(users);
+            }
+
+            alert('资料保存成功！');
+        });
+    </script>
+</body>
+</html>

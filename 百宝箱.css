@@ -1,0 +1,35 @@
+.module-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 三列等宽 */
+    grid-gap: 20px; /* 列与行之间的间距 */
+    max-width: 800px; /* 容器最大宽度，可根据需要调整 */
+    margin: 50px auto; /* 居中显示 */
+    padding: 0 20px; /* 左右内边距，防止在小屏幕上贴边 */
+    background-color: #cdee75; /* 黄色背景 */
+    /* 这里不需要再设置 color 和 text-decoration，因为要针对 <a> 标签单独设置 */
+    padding: 10px 20px;        /* 按钮内边距 */
+    border-radius: 10px;        /* 圆角 */
+    font-size: 16px;
+    font-weight: bold;
+    align-items: center;       /* 垂直居中 */
+    gap: 8px;                  /* 图标和文字之间的距离 */
+}
+
+.module-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.module-item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+}
+
+/* 新增对超链接 <a> 标签的样式设置 */
+.module-item a {
+    color: #000; /* 文字设置为黑色 */
+    text-decoration: none; /* 去除下划线 */
+}

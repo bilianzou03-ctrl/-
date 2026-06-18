@@ -1,0 +1,29 @@
+.carousel {
+    width: 600px;
+    height: 300px;
+    overflow: hidden; /* 新增，隐藏溢出内容，包括垂直滚动条 */
+    position: relative;
+    margin: 0 auto;
+}
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 300%; /* 假设3张图片，宽度为3倍 */
+}
+.carousel-item {
+    flex: 0 0 33.33%;
+    height: 70%;
+}
+.carousel-item img {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+}
+.carousel {
+    width: 600px;
+    height: 300px;
+    overflow: hidden; /* 隐藏溢出内容，保证轮播效果 */
+    position: relative;
+    margin: 0 auto;
+    border-radius: 10px; /* 新增：设置轮播图容器的圆角 */
+}

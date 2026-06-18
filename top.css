@@ -1,0 +1,7 @@
+/* 对超链接a标签设置样式 */
+a {
+    color: #000; /* 文字颜色设为黑色 */
+    text-decoration: none; /* 去除下划线 */
+    font-size: 16px; /* 字体大小，可根据需求调整 */
+    font-weight: bold; /* 字体加粗，可根据需求调整 */
+}

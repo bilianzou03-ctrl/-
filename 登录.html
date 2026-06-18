@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号登录</title>
+    <style>
+        /* 全局基础：浅绿色背景 + 粒子点缀 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #e8f5e9; /* 浅绿色背景，与参考图一致 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 粒子背景：淡绿色小圆点，漂浮动画 */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background-color: rgba(102, 187, 106, 0.2); /* 淡绿色半透明粒子 */
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-20px) translateX(10px); }
+        }
+
+        /* 登录表单：白色卡片 + 圆角 + 阴影 */
+        .login-form {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .login-form h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        /* 表单项：输入框样式统一 */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #66bb6a; /* 聚焦时绿色边框 */
+            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
+        }
+
+        /* 错误提示：红色文字 */
+        .error-tip {
+            color: #ff4444;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* 登录按钮：黄色纯色 + hover效果 */
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffd600; /* 黄色按钮，与参考图注册按钮一致 */
+            border: none;
+            border-radius: 8px;
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .login-btn:hover {
+            background-color: #ffca28; /* hover时加深黄色 */
+            transform: translateY(-2px); /* 轻微上浮 */
+        }
+
+        /* 注册链接：绿色文字 */
+        .register-link {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #000000; /* 绿色链接 */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景容器（原有结构保留） -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 登录表单（原有结构完全保留） -->
+    <form class="login-form" id="loginForm">
+        <h2>账号登录</h2>
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input type="text" id="username" placeholder="请输入用户名" required>
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" placeholder="请输入密码" required>
+        </div>
+        <div class="error-tip" id="loginError">用户名或密码错误</div>
+        <button type="submit" class="login-btn">登录</button>
+        <div class="register-link">
+            没有账号？<a href="注册.html">去注册</a>
+        </div>
+    </form>
+
+    <!-- 粒子背景生成JS（原有逻辑保留） -->
+    <script>
+        const particles = document.getElementById('particles');
+        const particleCount = 50;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            const size = 3 + Math.random() * 7;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particles.appendChild(particle);
+        }
+    </script>
+
+    <!-- 原有登录逻辑（完全保留） -->
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+
+        const getUsers = () => JSON.parse(localStorage.getItem('users')) || [];
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const users = getUsers();
+
+            const matchedUser = users.find(user => 
+                user.username === username && user.password === password
+            );
+
+            if (!matchedUser) {
+                loginError.style.display = 'block';
+                return;
+            }
+            loginError.style.display = 'none';
+
+            localStorage.setItem('isLogin', 'true');
+            localStorage.setItem('currentUser', JSON.stringify(matchedUser));
+
+            alert('登录成功！');
+            window.location.href = '个人资料.html';
+        });
+    </script>
+</body>
+</html>

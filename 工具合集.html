@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏工具说明</title>
+    <style>
+        /* 全局基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden; /* 禁止横向滚动 */
+        }
+
+        /* 精灵粒子背景（主题绿色，呼应妖精风格） */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(76, 175, 80, 0.6); /* 主题绿色，半透明 */
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5); /* 发光效果，增强精灵感 */
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            25% { transform: translate(30px, -20px) scale(1.2); opacity: 0.8; }
+            50% { transform: translate(10px, 30px) scale(0.9); opacity: 0.5; }
+            75% { transform: translate(-20px, 10px) scale(1.1); opacity: 0.7; }
+        }
+
+        /* 页面标题（发光+渐变下划线，保持主题统一） */
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 50px;
+            text-shadow: 0 0 8px rgba(76, 175, 80, 0.2); /* 文字轻微发光 */
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0), rgba(76, 175, 80, 0.8), rgba(76, 175, 80, 0));
+        }
+
+        /* 工具说明容器（3行1列，居中，玻璃质感） */
+        .tool-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 单个工具项（左图右文，玻璃卡片+hover动效） */
+        .tool-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px); /* 毛玻璃效果，增强质感 */
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .tool-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12); /* hover时加深阴影，上浮更灵动 */
+        }
+
+        /* 工具图片（正方形，固定尺寸+圆角） */
+        .tool-img {
+            width: 100px;
+            height: 100px; /* 强制正方形 */
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(76, 175, 80, 0.3); /* 主题绿色细边框 */
+        }
+
+        .tool-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保持图片比例，填充容器 */
+        }
+
+        /* 工具文字说明（排版优化） */
+        .tool-info {
+            flex: 1; /* 文字区域占满剩余宽度 */
+        }
+
+        .tool-info h3 {
+            font-size: 1.2rem;
+            color: #4caf50; /* 工具名称用主题绿色，突出重点 */
+            margin-bottom: 8px;
+        }
+
+        .tool-info p {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6; /* 增大行高，提升可读性 */
+        }
+
+        /* 响应式适配（小屏幕垂直排列，优化体验） */
+        @media (max-width: 576px) {
+            .tool-item {
+                flex-direction: column; /* 小屏幕下，图片在上，文字在下 */
+                text-align: center;
+            }
+
+            .tool-img {
+                width: 120px;
+                height: 120px; /* 小屏幕放大图片，更清晰 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 精灵粒子背景容器 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 页面标题 -->
+    <h1 class="page-title">游戏工具</h1>
+
+    <!-- 工具说明容器（3行1列） -->
+    <div class="tool-container">
+        <!-- 第1个工具：妖精探测仪 -->
+        <div class="tool-item">
+            <div class="tool-img">
+                <img src="images/探测仪 (1).png" alt="妖精探测仪"> <!-- 替换为你的工具图片路径 -->
+            </div>
+            <div class="tool-info">
+                <h3>妖精探测仪</h3>
+                <p><strong>功能：</strong>可检测周围500米内隐藏的妖精灵质波动，精准显示妖精类型（如植物系、兽系、元素系）与大致实力等级；<br><strong>使用说明：</strong>长按仪器中央晶石按钮激活，绿灯缓慢闪烁表示发现普通妖精，红灯快速闪烁表示发现高阶/稀有妖精；满能续航3小时，需用灵晶充能，充能时仪器会发出柔和绿光。</p>
+            </div>
+        </div>
+
+        <!-- 第2个工具：灵质空间地图 -->
+        <div class="tool-item">
+            <div class="tool-img">
+                <img src="images/探测仪 (2).png" alt="灵质空间地图"> <!-- 替换为你的工具图片路径 -->
+            </div>
+            <div class="tool-info">
+                <h3>灵质空间地图</h3>
+                <p><strong>功能：</strong>高精度标注已知的灵质空间入口（如蓝溪镇、会馆总部、上古秘境入口），并实时更新空间内的安全区域、危险区域与资源点分布；<br><strong>使用说明：</strong>点击地图上的发光标记可查看空间详情（妖精分布密度、资源稀有度、近期探索者留言）；支持离线缓存，每周一自动同步会馆最新探测到的空间入口。</p>
+            </div>
+        </div>
+
+        <!-- 第3个工具：法术能量计算器 -->
+        <div class="tool-item">
+            <div class="tool-img">
+                <img src="images/探测仪 (3).png" alt="法术能量计算器"> <!-- 替换为你的工具图片路径 -->
+            </div>
+            <div class="tool-info">
+                <h3>法术能量计算器</h3>
+                <p><strong>功能：</strong>输入妖精的种族、等级、已觉醒技能，可精准计算该妖精释放特定法术的能量消耗、威力值与施法冷却时间；<br><strong>使用说明：</strong>在界面输入框填写妖精信息后，点击“灵算”按钮，结果会以动态图表形式展示，支持多妖精法术效率对比，辅助搭配战斗阵容、规划技能释放顺序。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 生成精灵粒子的JS -->
+    <script>
+        const particles = document.getElementById('particles');
+        const particleCount = 25; // 粒子数量，可根据喜好调整（越多越密集）
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // 随机粒子大小（5-10px，营造层次感）
+            const size = 5 + Math.random() * 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // 随机水平位置
+            particle.style.left = `${Math.random() * 100}%`;
+            // 随机垂直位置
+            particle.style.top = `${Math.random() * 100}%`;
+            
+            // 随机动画延迟（让粒子运动更错落有致）
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            
+            particles.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

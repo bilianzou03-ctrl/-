@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>签到福利</title>
+    <style>
+        /* 全局基础：浅米色背景 + 统一风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f8f4e9; /* 浅米色背景，与参考图一致 */
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 活动头部：时间标签 + 标题 + 角色图 */
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .activity-time {
+            background-color: #d4b996;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .header-title {
+            text-align: center;
+            flex: 1;
+            margin: 0 20px;
+        }
+        .header-title h2 {
+            font-size: 28px;
+            color: #5d4037;
+            margin-bottom: 10px;
+        }
+        .header-title p {
+            font-size: 18px;
+            color: #795548;
+        }
+        .header-title p strong {
+            color: #ffc107; /* 黄色强调“必得” */
+        }
+        .decor-char img {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+        }
+
+        /* 扫码与奖励说明区 */
+        .card-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .qr-code {
+            text-align: center;
+        }
+        .qr-code img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .qr-code p {
+            color: #5d4037;
+        }
+        .main-reward {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .main-reward .reward-img img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+        }
+        .main-reward p {
+            color: #5d4037;
+            font-size: 16px;
+        }
+        .main-reward p strong {
+            color: #ffc107; /* 黄色强调“专属奖励” */
+        }
+
+        /* 签到状态区 */
+        .sign-status-area {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sign-status {
+            font-size: 18px;
+            color: #5d4037;
+            margin-bottom: 10px;
+        }
+        .sign-days {
+            font-size: 16px;
+            color: #795548;
+        }
+        .sign-btn {
+            background-color: #fdd835; /* 黄色签到按钮 */
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            color: #5d4037;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        .sign-btn:hover {
+            background-color: #ffca28;
+        }
+        .sign-btn:disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+        }
+
+        /* 奖励进度卡片：横向滚动（小屏幕适配） */
+        .sign-progress {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .progress-card {
+            flex: 0 0 200px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .progress-card .day-img img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .progress-card p {
+            color: #5d4037;
+            margin-bottom: 5px;
+        }
+        .progress-card span {
+            color: #795548;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 活动头部 -->
+        <div class="activity-header">
+            <div class="activity-time">活动时间: 永久</div>
+            <div class="header-title">
+                <h2>社区签到福利</h2>
+                <p>每日签到 <strong>必得</strong> 游戏奖励</p>
+            </div>
+            <div class="decor-char">
+                <img src="images/老君1.png" alt="角色装饰图">
+            </div>
+        </div>
+
+        <!-- 签到状态区 -->
+        <div class="sign-status-area">
+            <div class="sign-status" id="signStatus"></div>
+            <div class="sign-days" id="signDays">累计签到：0 天</div>
+            <button class="sign-btn" id="signBtn">立即签到</button>
+        </div>
+
+        <!-- 扫码与奖励说明 -->
+        <div class="card-content">
+            <div class="qr-code">
+                <img src="images/众生之门3.jpg" alt="扫码参与">
+                <p>扫码参与<br>领取签到福利</p>
+            </div>
+            <div class="main-reward">
+                <div class="reward-img">
+                    <img src="images/清凝1.png" alt="专属奖励图标">
+                </div>
+                <p>绑定账号即送 <strong>专属奖励</strong>，每日签到可获得多重福利</p>
+            </div>
+        </div>
+
+        <!-- 奖励进度卡片 -->
+        <div class="sign-progress">
+            <div class="progress-card" onclick="signHandler(1)">
+                <div class="day-img"><img src="images/侍女1.png" alt="第1天奖励"></div>
+                <p>第1天奖励</p><span>X3</span>
+            </div>
+            <div class="progress-card" onclick="signHandler(4)">
+                <div class="day-img"><img src="images/西木子1.png" alt="第4天奖励"></div>
+                <p>第4天奖励</p><span>X20</span>
+            </div>
+            <div class="progress-card" onclick="signHandler(7)">
+                <div class="day-img"><img src="images/无限2.png" alt="第7天奖励"></div>
+                <p>第7天奖励</p><span>X50</span>
+            </div>
+            <div class="progress-card" onclick="signHandler(14)">
+                <div class="day-img"><img src="images/无限1.png" alt="第14天奖励"></div>
+                <p>第14天奖励</p><span>限定道具</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 原有动画JS（若需保留） -->
+    <script src="你的动画JS文件名.js"></script>
+
+    <!-- 签到逻辑（功能不变） -->
+    <script>
+        const signBtn = document.getElementById('signBtn');
+        const signStatus = document.getElementById('signStatus');
+        const signDaysEl = document.getElementById('signDays');
+        const getCurrentUser = () => JSON.parse(localStorage.getItem('currentUser')) || null;
+        const getUsers = () => JSON.parse(localStorage.getItem('users')) || [];
+        const saveUsers = (users) => localStorage.setItem('users', JSON.stringify(users));
+        const saveCurrentUser = (user) => localStorage.setItem('currentUser', JSON.stringify(user));
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        const today = formatDate(new Date());
+
+        window.onload = function() {
+            const currentUser = getCurrentUser();
+            const isLogin = localStorage.getItem('isLogin') === 'true';
+
+            if (!isLogin || !currentUser) {
+                signStatus.textContent = '请先登录再签到～';
+                signBtn.disabled = true;
+                return;
+            }
+
+            signDaysEl.textContent = `累计签到：${currentUser.signDays} 天`;
+
+            if (currentUser.lastSignDate === today) {
+                signStatus.textContent = '今日已签到，明天再来吧～';
+                signBtn.textContent = '已签到';
+                signBtn.disabled = true;
+            } else {
+                signStatus.textContent = '今日未签到，点击按钮领取奖励～';
+                signBtn.disabled = false;
+            }
+        };
+
+        signBtn.addEventListener('click', function() {
+            const currentUser = getCurrentUser();
+            const users = getUsers();
+
+            currentUser.signDays += 1;
+            currentUser.lastSignDate = today;
+
+            saveCurrentUser(currentUser);
+
+            const userIndex = users.findIndex(u => u.username === currentUser.username);
+            if (userIndex !== -1) {
+                users[userIndex].signDays = currentUser.signDays;
+                users[userIndex].lastSignDate = today;
+                saveUsers(users);
+            }
+
+            signStatus.textContent = `签到成功！累计签到 ${currentUser.signDays} 天`;
+            signDaysEl.textContent = `累计签到：${currentUser.signDays} 天`;
+            signBtn.textContent = '已签到';
+            signBtn.disabled = true;
+
+            alert(`签到成功！获得今日奖励，累计签到${currentUser.signDays}天`);
+        });
+
+        function signHandler(day) {
+            alert(`点击了第${day}天的签到卡片～`);
+        }
+    </script>
+</body>
+</html>

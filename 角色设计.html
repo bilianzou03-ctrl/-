@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>罗小黑战记大电影2 - 主要角色设计</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4ade80', // 主色调：清新绿色
+            secondary: '#16a34a', // 辅助色：深绿色
+            accent: '#a7f3d0', // 强调色：浅绿色
+            dark: '#0f172a', // 深色背景
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'float': 'float 3s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+      }
+      /* 角色卡片容器基础样式 */
+.image-frame {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease; /*  hover 动画过渡 */
+}
+
+/* 卡片内图片样式 */
+.image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保持图片比例，填充容器 */
+  transition: transform 0.3s ease; /* 图片放大动画 */
+}
+
+/* 卡片 hover 时的效果 */
+.image-frame:hover {
+  /* 渐变外轮廓（模拟边框） */
+  outline: 4px solid transparent; /* 透明外轮廓，为渐变留空间 */
+  outline-offset: 2px; /* 外轮廓与卡片的间距 */
+  background: linear-gradient(to right, #4ade80, #16a34a); /* 渐变背景 */
+  -webkit-mask-composite: destination-out; /* WebKit 内核兼容 */
+  mask-composite: exclude; /* 标准语法，实现“描边且中间透明” */
+  box-shadow: 0 10px 25px rgba(74, 222, 128, 0.2); /* 悬浮阴影，增强立体感 */
+}
+
+/* 图片 hover 时轻微放大 */
+.image-frame:hover img {
+  transform: scale(1.02);
+}
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-green-50 to-teal-100 font-inter min-h-screen">
+  <!-- 页面主体内容 -->
+  <div class="container mx-auto px-4 py-12 max-w-7xl">
+    <!-- 标题区域 -->
+    <header class="text-center mb-16 relative">
+      <!-- 装饰元素 -->
+      <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-primary/10 rounded-full -z-10"></div>
+      <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-secondary/10 rounded-full -z-10"></div>
+      
+      <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-dark mb-4 text-shadow">
+        主要角色设计
+      </h1>
+      <p class="text-[clamp(1.2rem,2vw,1.6rem)] text-secondary font-medium italic">
+        罗小黑战记大电影2
+      </p>
+      
+      <!-- 装饰分隔线 -->
+      <div class="flex items-center justify-center mt-8 space-x-4">
+        <div class="h-px w-20 bg-gradient-to-r from-transparent to-primary"></div>
+        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+          <i class="fa fa-paw text-primary"></i>
+        </div>
+        <div class="h-px w-20 bg-gradient-to-l from-transparent to-primary"></div>
+      </div>
+    </header>
+    
+    <!-- 角色展示区域（三列布局，9:16 竖版图片） -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- 角色卡片 1 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/小黑f1.jpg" alt="罗小黑" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <!-- 角色卡片 2 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/小黑f2.jpg" alt="无限" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <!-- 角色卡片 3 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/小黑f3.jpg" alt="风息" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <!-- 角色卡片 4 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/小黑f4.jpg" alt="虚淮" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <!-- 角色卡片 5 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/无限f1.jpg" alt="洛竹" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <!-- 角色卡片 6 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/无限f2.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 7 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/无限f3.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 8 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/鹿野f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 9 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/鹿野f2.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 10 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/鹿野f3.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 11 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/哪吒f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 12 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/池年f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 13 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/西木子f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 14 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/灵遥f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 15 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/鸠老f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 16 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/甲f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 17 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/乙f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+       <!-- 角色卡片 18 -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        <div class="image-frame aspect-[9/16]">
+          <img src="images/潘靖f1.jpg" alt="天虎" class="w-full h-full object-cover">
+        </div>
+      </div>
+    </main>
+    
+    <!-- 页脚区域 -->
+    <footer class="mt-20 text-center text-gray-600 text-sm">
+      <p>© 2025 罗小黑战记大电影2 - 角色设计展示</p>
+      <div class="mt-4 flex justify-center space-x-4">
+        <a href="#" class="text-primary hover:text-secondary transition-colors duration-300">
+          <i class="fa fa-weibo"></i>
+        </a>
+        <a href="#" class="text-primary hover:text-secondary transition-colors duration-300">
+          <i class="fa fa-wechat"></i>
+        </a>
+        <a href="#" class="text-primary hover:text-secondary transition-colors duration-300">
+          <i class="fa fa-instagram"></i>
+        </a>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- 悬浮装饰元素 -->
+  <div class="fixed top-1/4 right-8 w-16 h-16 bg-primary/20 rounded-full animate-float -z-10"></div>
+  <div class="fixed bottom-1/3 left-8 w-20 h-20 bg-secondary/10 rounded-full animate-float -z-10" style="animation-delay: 1s"></div>
+  <div class="fixed top-1/2 left-1/4 w-12 h-12 bg-accent/30 rounded-full animate-float -z-10" style="animation-delay: 2s"></div>
+</body>
+</html>

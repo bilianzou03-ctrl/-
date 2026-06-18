@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>妖精传说：蓝溪镇纪事</title>
+    <style>
+        /* 全局基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "SimSun", serif;
+        }
+
+        body {
+            background-color: #f0f7f2; /* 浅绿背景，贴合绿色系 */
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden; /* 禁止横向滚动 */
+            line-height: 1.8; /* 行高优化，提升阅读体验 */
+            color: #2d3748;
+        }
+
+        /* 1. 精灵粒子背景（绿色系，模拟灵质/草木气息） */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(76, 175, 80, 0.5); /* 主题绿色，半透明 */
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.7); /* 绿色发光，增强奇幻感 */
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+            25% { transform: translate(25px, -18px) scale(1.1); opacity: 0.7; }
+            50% { transform: translate(12px, 30px) scale(0.9); opacity: 0.3; }
+            75% { transform: translate(-18px, 12px) scale(1.05); opacity: 0.6; }
+        }
+
+        /* 2. 故事标题区（居中+绿色装饰线） */
+        .story-header {
+            max-width: 800px;
+            margin: 0 auto 60px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .story-title {
+            font-size: 2.2rem;
+            color: #000000; /* 主题黑色标题 */
+            margin-bottom:15px;
+            letter-spacing: 2px;
+        }
+
+        .story-subtitle {
+            font-size: 1rem;
+            color: #6b7280; /* 深灰绿，适配绿色系 */
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0), rgba(76, 175, 80, 0.8), rgba(76, 175, 80, 0)); /* 绿色渐变分隔线 */
+            margin: 0 auto;
+        }
+
+        /* 3. 章节容器（1列布局，居中+玻璃质感） */
+        .chapters-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 50px; /* 章节间距 */
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 4. 单个章节样式（绿色边框） */
+        .chapter {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px); /* 毛玻璃效果，柔和背景 */
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #016823; /* 左侧主题绿色边框，区分章节 */
+        }
+
+        .chapter-number {
+            font-size: 0.9rem;
+            color: #016823; /* 绿色章节编号 */
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chapter-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e8f5e9; /* 浅绿边框，贴合绿色系 */
+            padding-bottom: 10px;
+        }
+
+        .chapter-content {
+            font-size: 1.05rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+            text-indent: 2em; /* 首行缩进，符合中文阅读习惯 */
+        }
+
+        /* 5. 章节图片（绿色系场景适配） */
+        .chapter-img {
+            width: 100%;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8f5e9; /* 浅绿边框，增强绿色系融合度 */
+        }
+
+        /* 6. 翻页按钮（绿色系按钮） */
+        .page-nav {
+            max-width: 800px;
+            margin: 40px auto 0;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: #016823; /* 主题绿色按钮 */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #388e3c; /* 深绿色hover效果，同色系加深 */
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background-color: #c8e6c9; /* 浅灰绿禁用色，适配绿色系 */
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 7. 响应式适配（小屏幕优化） */
+        @media (max-width: 768px) {
+            .story-title {
+                font-size: 1.8rem;
+            }
+
+            .chapter {
+                padding: 25px;
+            }
+
+            .chapter-title {
+                font-size: 1.3rem;
+            }
+
+            .chapter-content {
+                font-size: 1rem;
+                text-indent: 1.5em;
+            }
+
+            .page-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 精灵粒子背景容器 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 故事标题区 -->
+    <div class="story-header">
+        <h1 class="story-title">妖精传说：蓝溪镇纪事</h1>
+        <p class="story-subtitle">—— 一座藏在灵脉深处，人妖共生的千年古镇 ——</p>
+        <div class="divider"></div>
+    </div>
+
+    <!-- 章节容器 -->
+    <div class="chapters-container">
+        <!-- 第1章：初入蓝溪 -->
+        <div class="chapter">
+            <div class="chapter-number">Chapter 01</div>
+            <h2 class="chapter-title">雾中的绿桥与灵溪</h2>
+            <p class="chapter-content">
+                阿轩是在一个雾蒙蒙的清晨找到蓝溪镇的。他跟着地图上“沿灵溪上行三十里，见绿桥即入”的指引，穿过茂密的竹林后，一道泛着淡绿色光泽的石桥突然出现在雾中——桥身由不知名的青石砌成，栏杆上刻着缠绕的藤蔓纹样，水滴顺着纹样边缘滴落，坠入桥下的溪流，竟激起细碎的绿光。
+            </p>
+            <p class="chapter-content">
+                “这就是绿桥？”阿轩踏上石桥，指尖轻触栏杆，突然感到一阵微凉的暖意顺着指尖蔓延至全身。他抬头望去，雾霭中隐约露出青瓦白墙的屋顶，溪流沿着街道蜿蜒，家家户户的门前都挂着绿色的灯笼，灯笼下悬着小小的风铃，风吹过时，发出的不是金属碰撞声，而是草木摇曳般的“沙沙”声。
+            </p>
+            <p class="chapter-content">
+                “外来的小家伙？”一个苍老的声音从桥尾传来。阿轩回头，看见一位拄着竹杖的老人，老人的须发皆白，却穿着一身青绿色的短衫，袖口绣着一朵淡绿的莲花。“别怕，蓝溪镇不拒客人。”老人笑着说，“我是这里的守桥人，你可以叫我青伯。跟我来吧，先喝碗热汤暖暖身子。”
+            </p>
+        </div>
+
+        <!-- 第2章：古镇秘闻 -->
+        <div class="chapter">
+            <div class="chapter-number">Chapter 02</div>
+            <h2 class="chapter-title">人妖共生的绿之约定</h2>
+            <p class="chapter-content">
+                青伯的屋子在溪流边，是一间带着小院的木屋。院角种着几株淡绿色的花，花瓣像薄纱一样透明，青伯说这是“溪凝花”，只有蓝溪镇的灵溪水能养活，花瓣会随灵脉波动泛出绿光。他给阿轩端来一碗热气腾腾的汤，汤里飘着几片嫩绿的菜叶，喝下去后，阿轩只觉得连日赶路的疲惫都消散了大半。
+            </p>
+            <p class="chapter-content">
+                “蓝溪镇已经有上千年的历史了。”青伯坐在院中的石凳上，慢慢说起了古镇的过往，“这里本是灵脉的汇聚点，最早只有草木系妖精居住。后来人类因战乱逃难至此，妖精们没有驱赶，反而划出一片区域让人类定居——条件是，人类要守护灵溪与周围的草木，不破坏这里的平衡。”
+            </p>
+            <p class="chapter-content">
+                阿轩这才注意到，镇上的居民有些“特别”：有的孩子耳朵尖尖的，跑动时身后会晃过淡淡的树叶虚影；有的老人坐在门口编织，手指能操控藤蔓自动穿梭——这些都是半人半妖的后代。“我们早就不分人与妖了。”青伯笑着说，“灵溪滋养草木，草木滋养我们，我们守护灵溪，这就是蓝溪镇的‘绿之约定’。”
+            </p>
+        </div>
+
+        <!-- 第3章：灵溪的危机 -->
+        <div class="chapter">
+            <div class="chapter-number">Chapter 03</div>
+            <h2 class="chapter-title">失色的溪凝花与守护之心</h2>
+            <p class="chapter-content">
+                阿轩在蓝溪镇住了半个月，每天跟着青伯打理溪凝花，听镇上的人讲过去的故事。他发现，这里的日子平静得像灵溪的流水，直到有一天，他发现院角的溪凝花开始失色——原本透明的绿色花瓣，慢慢变成了苍白，连花瓣上的绿光都消失了。
+            </p>
+            <p class="chapter-content">
+                “灵溪的灵力在减弱。”青伯的脸色凝重起来，“这几天我去上游查看，发现有人在灵溪的源头挖矿石——他们不知道，灵溪的灵力藏在矿石与周围的草木根须里，一旦被挖走，灵溪会干涸，溪凝花会枯萎，蓝溪镇也会……”
+            </p>
+            <p class="chapter-content">
+                当天下午，镇上的人聚在绿桥边商量对策。有人说要赶走外来的采矿者，有人担心冲突会引发更大的灾难。阿轩看着桥下逐渐失去绿光的溪水，突然想起刚来时青伯说的话：“蓝溪镇不拒客人，但也不会让任何人破坏这里的绿意。”他举起手，轻声说：“我有个想法——或许，我们可以让他们明白，灵溪与草木，比矿石更重要。”
+            </p>
+            <p class="chapter-content">
+                夕阳下，阿轩的身影映在灵溪中，身后是蓝溪镇的居民——人类与妖精并肩站在一起，他们的眼神里，都带着对这片绿色土地的守护之意。而远处的雾霭中，绿桥的轮廓依旧清晰，仿佛在无声地见证，这场关于“绿之约定”的新守护故事。
+            </p>
+        </div>
+    </div>
+
+    <!-- 翻页按钮 -->
+    <div class="page-nav">
+        <button class="nav-btn" disabled>上一章</button>
+        <button class="nav-btn">下一章（待更新）</button>
+    </div>
+
+    <!-- 生成精灵粒子的JS -->
+    <script>
+        const particles = document.getElementById('particles');
+        const particleCount = 35; // 粒子数量，模拟草木灵质
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // 随机粒子大小（4-10px，层次更丰富）
+            const size = 4 + Math.random() * 6;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // 随机位置（覆盖整个屏幕）
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            
+            // 随机动画延迟（0-10秒，避免粒子运动同步）
+            particle.style.animationDelay = `${Math.random() * 10}s`;
+            
+            // 随机透明度（0.3-0.8，模拟草木灵质的虚实感）
+            particle.style.opacity = 0.3 + Math.random() * 0.5;
+            
+            particles.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

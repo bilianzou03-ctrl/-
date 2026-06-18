@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会馆成员</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        /* 全局基础样式：允许纵向滚动+背景色 */
+        body {
+            background-color: #f8f9fa;
+            padding: 30px 20px;
+            overflow-x: hidden; /* 禁止横向滚动 */
+            overflow-y: auto;   /* 允许纵向滚动（适配多卡片） */
+            position: relative;
+        }
+
+        /* 1. 精灵粒子背景（延续主题奇幻感） */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150%; /* 覆盖页面+底部空白 */
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(76, 175, 80, 0.6); /* 绿色精灵粒子 */
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            25% { transform: translate(25px, -15px) scale(1.1); opacity: 0.8; }
+            50% { transform: translate(10px, 25px) scale(0.9); opacity: 0.5; }
+            75% { transform: translate(-15px, 10px) scale(1.05); opacity: 0.7; }
+        }
+
+        /* 2. 两侧藤蔓装饰（呼应众生之门页面） */
+        .vines {
+            position: fixed;
+            top: 10%;
+            height: 150%; /* 覆盖页面+底部空白 */
+            width: 60px; /* 比之前略窄，避免遮挡卡片 */
+            z-index: -1;
+        }
+
+        .vines.left {
+            left: 20px;
+            background: url("data:image/svg+xml,%3Csvg width='16' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 Q8,50 0,100 Q8,150 0,200' stroke='%234CAF50' stroke-width='2' fill='none' stroke-dasharray='5,5' opacity='0.3'/%3E%3C/svg%3E") repeat-y;
+        }
+
+        .vines.right {
+            right: 20px;
+            background: url("data:image/svg+xml,%3Csvg width='16' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16,0 Q8,50 16,100 Q8,150 16,200' stroke='%232196F3' stroke-width='2' fill='none' stroke-dasharray='5,5' opacity='0.3'/%3E%3C/svg%3E") repeat-y;
+        }
+
+        /* 3. 页面标题美化（渐变下划线+文字发光） */
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0), rgba(76, 175, 80, 0.8), rgba(76, 175, 80, 0)); /* 渐变下划线 */
+            border-radius: 2px;
+        }
+
+        /* 4. 卡片容器：保留网格布局，调整间距 */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 一行4列 */
+            gap: 25px; /* 增大间距，更透气 */
+            max-width: 1200px;
+            margin: 0 auto 180px; /* 底部空白180px，适配多卡片 */
+            padding: 0 10px; /* 小屏幕左右留白 */
+        }
+
+        /* 5. 成员卡片：玻璃质感+强化交互 */
+        .person-card {
+            background: rgba(255, 255, 255, 0.85); /* 半透明白色 */
+            backdrop-filter: blur(10px); /* 毛玻璃效果 */
+            border-radius: 12px; /* 增大圆角，更柔和 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06); /* 初始浅阴影 */
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 丝滑过渡 */
+            border: 1px solid rgba(255, 255, 255, 0.5); /* 细边框，增强玻璃感 */
+        }
+
+        /* 卡片hover效果：上浮+深阴影+轻微放大 */
+        .person-card:hover {
+            transform: translateY(-8px) scale(1.02); /* 上浮+微放大 */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12); /* 加深阴影 */
+        }
+
+        /* 卡片图片：优化裁剪+过渡 */
+        .card-img {
+            width: 100%;
+            height: 190px; /* 增高图片区，更协调 */
+            object-fit: cover;
+            transition: transform 0.5s ease; /* 图片hover放大 */
+        }
+
+        .person-card:hover .card-img {
+            transform: scale(1.05); /* 卡片hover时图片微放大 */
+        }
+
+        /* 卡片信息区：调整间距+文字优化 */
+        .card-info {
+            padding: 18px;
+        }
+
+        .card-info h3 {
+            font-size: 1.1rem;
+            color: #222;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .person-card:hover .card-info h3 {
+            color: #4caf50; /* hover时名字变主题绿 */
+        }
+
+        .card-info p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 6px;
+            line-height: 1.6; /* 增大行高，更易读 */
+        }
+
+        .card-info p strong {
+            color: #333; /* 强调文字（身份/存在时间等）加深 */
+        }
+
+        /* 6. 响应式适配：优化小屏幕显示 */
+        @media (max-width: 1024px) {
+            .card-container {
+                grid-template-columns: repeat(3, 1fr); /* 中屏3列 */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                grid-template-columns: repeat(2, 1fr); /* 小屏2列 */
+            }
+            .vines {
+                width: 40px; /* 小屏缩小藤蔓宽度 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-container {
+                grid-template-columns: 1fr; /* 超小屏1列 */
+            }
+            .page-title {
+                font-size: 1.8rem; /* 小屏缩小标题 */
+            }
+            .vines {
+                display: none; /* 超小屏隐藏藤蔓，避免遮挡 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 精灵粒子背景容器 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 两侧藤蔓装饰 -->
+    <div class="vines left"></div>
+    <div class="vines right"></div>
+
+    <!-- 页面标题 -->
+    <h1 class="page-title">会馆成员</h1>
+
+    <!-- 成员卡片容器 -->
+    <div class="card-container">
+        <!-- 老君 -->
+        <div class="person-card">
+            <img src="images/老君.jpg" alt="老君照片" class="card-img">
+            <div class="card-info">
+                <h3>老君</h3>
+                <p><strong>身份：</strong>上古妖精，会馆 “人妖共存” 理念核心奠基者之一</p>
+                <p><strong>存在时间：</strong>已存续数千年</p>
+                <p><strong>特点：</strong>精通灵质空间构建、御灵术等顶尖法术，持有 “天明珠” 等神异至宝；创建蓝溪镇庇护人妖共生，其对 “规则与包容” 的思考，深刻影响会馆体系构建，虽隐退仍与会馆关联紧密</p>
+            </div>
+        </div>
+
+        <!-- 无限 -->
+        <div class="person-card">
+            <img src="images/无限.jpg" alt="无限照片" class="card-img">
+            <div class="card-info">
+                <h3>无限</h3>
+                <p><strong>身份：</strong>精会馆核心成员、最强 “执行者”（人类，却拥有顶尖妖精战力）</p>
+                <p><strong>存在时间：</strong>外貌约 35 - 40 岁（实际因法术影响，已存在很久）</p>
+                <p><strong>特点：</strong>精通御金、御水等多种法术，战斗力天花板；原为冷酷执行者，后因引导罗小黑，逐渐关注 “人妖共存”，性格外冷内热</p>
+            </div>
+        </div>
+
+        <!-- 玄离 -->
+        <div class="person-card">
+            <img src="images/玄离.jpg" alt="玄离照片" class="card-img">
+            <div class="card-info">
+                <h3>玄离</h3>
+                <p><strong>身份：</strong>上古神兽（火属性妖精），会馆相关古老战力代表</p>
+                <p><strong>存在时间：</strong>数千年</p>
+                <p><strong>特点：</strong>能力为 “御火” 与极速 “闪” 行，战斗力卓绝；与老君、蓝溪镇渊源深厚，参与过古老的人妖事务协调，其力量和经历对会馆处理特殊妖精事件具有重要参照意义</p>
+            </div>
+        </div>
+
+        <!-- 风息 -->
+        <div class="person-card">
+            <img src="images/风息.jpg" alt="风息照片" class="card-img">
+            <div class="card-info">
+                <h3>风息</h3>
+                <p><strong>身份：</strong>妖精（虎杖属妖精，曾是森林的守护者）</p>
+                <p><strong>存在时间：</strong>已存在数百年</p>
+                <p><strong>特点：</strong>能操控植物生长，可构建 “领域・茫”（覆盖大片区域的专属能力领域）；因人类破坏妖精家园而策划行动，性格复杂，对 “妖精失去自然栖息地” 有强烈抵触</p>
+            </div>
+        </div>
+
+        <!-- 虚淮 -->
+        <div class="person-card">
+            <img src="images/虚淮.jpg" alt="虚淮照片" class="card-img">
+            <div class="card-info">
+                <h3>虚淮</h3>
+                <p><strong>身份：</strong>妖精会馆 “执行者”</p>
+                <p><strong>存在时间：</strong>数百年</p>
+                <p><strong>特点：</strong>能力为 “御水”（操控水流、凝结水刃等），是会馆资深执行者；行事严谨、战斗力强，参与过多个涉及人妖冲突的重要任务</p>
+            </div>
+        </div>
+
+        <!-- 洛竹 -->
+        <div class="person-card">
+            <img src="images/洛竹.jpg" alt="洛竹照片" class="card-img">
+            <div class="card-info">
+                <h3>洛竹</h3>
+                <p><strong>身份：</strong>妖精</p>
+                <p><strong>存在时间：</strong>约百年（外貌呈现年轻态）</p>
+                <p><strong>特点：</strong>能力是 “盗取”（可短时间借用他人的能力，但有范围和时长限制）；曾追随风息，性格相对单纯，渴望找到妖精的 “归属家园”</p>
+            </div>
+        </div>
+
+        <!-- 潘靖 -->
+        <div class="person-card">
+            <img src="images/潘靖.jpg" alt="潘靖照片" class="card-img">
+            <div class="card-info">
+                <h3>潘靖</h3>
+                <p><strong>身份：</strong>妖精会馆的人类联络员</p>
+                <p><strong>存在时间：</strong>已存在数百年</p>
+                <p><strong>特点：</strong>负责协调 “会馆与人类世界” 的事务，了解妖精群体的历史与规则；性格温和，致力于推动 “人妖良性沟通”，为妖精提供人类社会的帮助与指引</p>
+            </div>
+        </div>
+
+        <!-- 阿根 -->
+        <div class="person-card">
+            <img src="images/阿根.jpg" alt="阿根照片" class="card-img">
+            <div class="card-info">
+                <h3>阿根</h3>
+                <p><strong>身份：</strong>（冰属性，玄离灵质空间关联存在），会馆潜在关联成员</p>
+                <p><strong>存在时间：</strong>外貌约 20 余岁（因灵质空间羁绊，实际存在更久）</p>
+                <p><strong>特点：</strong>能力为 “御冰”，继承玄离部分力量与记忆；了解蓝溪镇和古老妖精历史，在后续涉及灵质空间、跨种族事务等会馆相关工作中有所参与，性格沉稳，擅长冰系法术的实战应用</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 生成精灵粒子的JS -->
+    <script>
+        const particles = document.getElementById('particles');
+        const particleCount = 95; // 粒子数量（比单页多，适配多卡片）
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            // 随机位置（覆盖页面+底部空白）
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 150}%`;
+            // 随机动画延迟
+            particle.style.animationDelay = `${Math.random() * 6}s`;
+            // 随机大小（5-10px，更有层次感）
+            const size = 5 + Math.random() * 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particles.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+.button-group {
+  margin: 20px;
+  display: flex;      /* 启用 Flex 布局 */
+  flex-wrap: wrap;    /* 自动换行，避免按钮挤在一起 */
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  gap: 10px;          /* 按钮之间的间距 */
+}
+
+.yellow-btn {
+  background-color: #ffd90d; /* 黄色背景 */
+  color: #333;               /* 文字颜色 */
+  text-decoration: none;     /* 去掉链接下划线 */
+  padding: 20px 40px;        /* 按钮内边距 */
+  border-radius: 8px;        /* 圆角 */
+  margin-right: 0;           /* 取消原来的右 margin，用 gap 控制间距 */
+  font-size: 20px;
+  font-weight: bold;
+  display: inline-flex;      /* 让图标和文字横向排列 */
+  align-items: center;       /* 垂直居中 */
+  gap: 5px;                  /* 图标和文字之间的距离 */
+  cursor: pointer;
+  border: none;
+}
+
+.yellow-btn img {
+  width: 50px;
+  height: 50px;
+}
+
+.yellow-btn:hover {
+  background-color: #ffdd66; /* 鼠标悬停时颜色变浅 */
+}
+/* 🔥 语录卡片：柔和渐变+多层阴影+圆角 */
+.quote-card {
+    background: linear-gradient(135deg, #fffaf0 0%, #fffdf7 100%); /* 米白→浅黄渐变，更柔和 */
+    border-radius: 16px; /* 大圆角，弱化生硬感 */
+    box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.03), /* 底层浅阴影 */
+        0 12px 30px rgba(255, 204, 51, 0.08), /* 中层黄调阴影，呼应主题 */
+        0 20px 50px rgba(0, 0, 0, 0.05); /* 外层深阴影，增强立体 */
+    padding: 40px;
+    max-width: 750px;
+    margin: 45px auto;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* 丝滑过渡曲线 */
+}
+
+/* 卡片悬浮：轻微放大+阴影强化，模拟“浮起”质感 */
+.quote-card:hover {
+    transform: scale(1.01);
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.05),
+        0 16px 40px rgba(255, 204, 51, 0.12),
+        0 24px 60px rgba(0, 0, 0, 0.08);
+}
+
+/* 🔥 语录标题：粗重字体+渐变下划线+文字阴影 */
+.quote-title {
+    font-size: 28px;
+    font-weight: 800; /* 更粗重，增强存在感 */
+    color: #333;
+    text-align: center;
+    margin-bottom: 35px;
+    position: relative;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.03); /* 细微文字阴影，提升质感 */
+}
+
+/* 标题下划线：渐变+细长设计，替代单调线条 */
+.quote-title::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #ffc14d, #ff9f4d); /* 暖黄→橙渐变，更活泼 */
+    border-radius: 2px;
+}
+
+/* 🔥 单条语录：图标装饰+行高/字距优化+hover 动效 */
+.quotes-list {
+    list-style: none; /* 清除默认列表样式 */
+}
+
+.quote-item {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.8; /* 宽松行高，提升阅读呼吸感 */
+    margin: 18px 0;
+    padding-left: 35px; /* 给图标留空间 */
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+/* 每条语录前的“引用图标”：精致符号+渐变色彩 */
+.quote-item::before {
+    content: "“";
+    font-family: Georgia, serif; /* 衬线字体，让引号更优雅 */
+    font-size: 28px;
+    left: 10px; 
+    color: #ffb74d; /* 暖黄色引号，呼应主题 */
+    position: absolute;
+    left: 0;
+    top: -4px;
+    opacity: 0.7; /* 半透明，避免抢文字焦点 */
+}
+
+/* 语录 hover：轻微右移+阴影，模拟“突出”交互 */
+.quote-item:hover {
+    transform: translateX(5px);
+    color: #333; /*  hover 时文字加深 */
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>众生之门</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow-x: hidden; /* 只禁止横向滚动，保留纵向滚动 */
+            overflow-y: auto;   /* 允许纵向滚动，显示下方空白 */
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        /* 粒子背景：高度设为150%，覆盖新增的空白区域 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150%; /* 比页面更长，避免空白处无粒子 */
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(76, 175, 80, 0.6); /* 绿色精灵粒子 */
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            25% { transform: translate(30px, -20px) scale(1.2); opacity: 0.8; }
+            50% { transform: translate(10px, 30px) scale(0.9); opacity: 0.5; }
+            75% { transform: translate(-20px, 10px) scale(1.1); opacity: 0.7; }
+        }
+
+        /* 主内容容器：底部加外边距，增加页面长度 */
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* 至少占满视口高度 */
+            padding: 40px;
+            margin-bottom: 300px; /* 关键！下方新增300px空白，数值可调整 */
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0), rgba(76, 175, 80, 0.8), rgba(76, 175, 80, 0));
+        }
+
+        /* 图片卡片：玻璃态 + 悬浮阴影 */
+        .img-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px); /* 毛玻璃效果 */
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .img-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .img-card img {
+            max-width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+        .tip-text {
+            font-size: 1rem;
+            color: #666;
+            margin: 0px 0 5px; /* 与标题、图片的间距 */
+        }
+
+        /* 两侧藤蔓装饰：高度设为150%，覆盖新增空白 */
+        .vines {
+            position: fixed;
+            top: 10%;
+            height: 150%; /* 跟随页面长度延长 */
+            width: 80px;
+            z-index: -1;
+        }
+
+        .vines.left {
+            left: 20px;
+            background: url("data:image/svg+xml,%3Csvg width='20' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 Q10,50 0,100 Q10,150 0,200' stroke='%234CAF50' stroke-width='2' fill='none' stroke-dasharray='5,5' opacity='0.3'/%3E%3C/svg%3E") repeat-y;
+        }
+
+        .vines.right {
+            right: 20px;
+            background: url("data:image/svg+xml,%3Csvg width='20' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,0 Q10,50 20,100 Q10,150 20,200' stroke='%232196F3' stroke-width='2' fill='none' stroke-dasharray='5,5' opacity='0.3'/%3E%3C/svg%3E") repeat-y;
+        }
+    </style>
+</head>
+<body>
+    <!-- 精灵粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 两侧藤蔓装饰 -->
+    <div class="vines left"></div>
+    <div class="vines right"></div>
+
+    <!-- 主内容 -->
+    <div class="center-container">
+        <h1>欢迎来到众生之门</h1>
+        <p class="tip-text">点击图片即可跳转</p> <!-- 新增提示文字 -->
+        <a href="https://genshin.hoyoverse.com/zh-tw/game" class="img-card">
+            <img src="images/众生之门2.jpg" alt="众生之门主题图片">
+        </a>
+    </div>
+
+    <script>
+        // 生成随机精灵粒子
+        const particles = document.getElementById('particles');
+        const count = 50; // 粒子数量
+
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            // 随机位置（新增Y轴范围，覆盖下方空白）
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 150}%`; // 顶部到150%高度都有粒子
+            // 随机动画延迟
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            // 随机大小
+            const size = 5 + Math.random() * 8;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particles.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
